@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Black Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            border-radius: 25px;
+            padding: 40px;
+            width: 450px;
+            max-width: 90vw;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 50px rgba(0, 255, 255, 0.1);
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent,
+                rgba(0, 255, 255, 0.1),
+                transparent,
+                rgba(255, 0, 255, 0.1),
+                transparent
+            );
+            animation: rotate 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .display {
+            background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid #333;
+            box-shadow: 
+                inset 0 5px 15px rgba(0, 0, 0, 0.5),
+                0 2px 5px rgba(0, 255, 255, 0.2);
+            position: relative;
+            min-height: 120px;
+        }
+
+        .display::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(0, 255, 255, 0.5), 
+                rgba(255, 0, 255, 0.5), 
+                transparent
+            );
+            border-radius: 15px 15px 0 0;
+        }
+
+        .input-display {
+            color: #888;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: right;
+            height: 25px;
+            font-weight: 300;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .result-display {
+            color: #00ffff;
+            font-size: 42px;
+            font-weight: 300;
+            text-align: right;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            min-height: 50px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+        }
+
+        button {
+            height: 75px;
+            border: none;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        button:active::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .number, .decimal {
+            background: linear-gradient(145deg, #2d2d2d, #404040);
+            color: #ffffff;
+            border: 1px solid #555;
+            box-shadow: 
+                0 5px 10px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .number:hover, .decimal:hover {
+            background: linear-gradient(145deg, #404040, #2d2d2d);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(0, 0, 0, 0.4),
+                0 0 15px rgba(0, 255, 255, 0.2);
+        }
+
+        .operator {
+            background: linear-gradient(145deg, #ff6b35, #ff8c42);
+            color: white;
+            border: 1px solid #ff4500;
+            box-shadow: 
+                0 5px 10px rgba(255, 107, 53, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .operator:hover {
+            background: linear-gradient(145deg, #ff8c42, #ff6b35);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(255, 107, 53, 0.4),
+                0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .equals {
+            background: linear-gradient(145deg, #00ff88, #00cc66);
+            color: white;
+            border: 1px solid #00aa55;
+            box-shadow: 
+                0 5px 10px rgba(0, 255, 136, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .equals:hover {
+            background: linear-gradient(145deg, #00cc66, #00ff88);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(0, 255, 136, 0.4),
+                0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .clear {
+            background: linear-gradient(145deg, #ff4757, #ff6b7a);
+            color: white;
+            border: 1px solid #ff3742;
+            box-shadow: 
+                0 5px 10px rgba(255, 71, 87, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .clear:hover {
+            background: linear-gradient(145deg, #ff6b7a, #ff4757);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(255, 71, 87, 0.4),
+                0 0 20px rgba(255, 71, 87, 0.3);
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .memory {
+            background: linear-gradient(145deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: 1px solid #5f3dc4;
+            box-shadow: 
+                0 5px 10px rgba(108, 92, 231, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .memory:hover {
+            background: linear-gradient(145deg, #a29bfe, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(108, 92, 231, 0.4),
+                0 0 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .scientific {
+            background: linear-gradient(145deg, #00cec9, #55efc4);
+            color: white;
+            border: 1px solid #00b894;
+            box-shadow: 
+                0 5px 10px rgba(0, 206, 201, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .scientific:hover {
+            background: linear-gradient(145deg, #55efc4, #00cec9);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 7px 15px rgba(0, 206, 201, 0.4),
+                0 0 20px rgba(0, 206, 201, 0.3);
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.5); }
+        }
+
+        .calculator:hover {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 25px;
+                margin: 10px;
+                width: 95vw;
+            }
+            
+            .buttons {
+                gap: 12px;
+            }
+            
+            button {
+                height: 65px;
+                font-size: 18px;
+            }
+            
+            .result-display {
+                font-size: 32px;
+            }
+            
+            .input-display {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="input-display" id="inputDisplay"></div>
+            <div class="result-display" id="resultDisplay">0</div>
+        </div>
+        <div class="buttons">
+            <button class="memory" onclick="memoryClear()">MC</button>
+            <button class="memory" onclick="memoryRecall()">MR</button>
+            <button class="memory" onclick="memoryAdd()">M+</button>
+            <button class="memory" onclick="memorySubtract()">M-</button>
+            <button class="clear" onclick="clearCalculator()">AC</button>
+            
+            <button class="scientific" onclick="inputFunction('sqrt')">√</button>
+            <button class="scientific" onclick="inputFunction('power')"  >x²</button>
+            <button class="scientific" onclick="inputFunction('percent')">%</button>
+            <button class="clear" onclick="deleteLast()">⌫</button>
+            <button class="operator" onclick="inputOperator('/')">/</button>
+            
+            <button class="number" onclick="inputNumber('7')">7</button>
+            <button class="number" onclick="inputNumber('8')">8</button>
+            <button class="number" onclick="inputNumber('9')">9</button>
+            <button class="operator" onclick="inputOperator('*')">×</button>
+            <button class="scientific" onclick="toggleSign()">±</button>
+            
+            <button class="number" onclick="inputNumber('4')">4</button>
+            <button class="number" onclick="inputNumber('5')">5</button>
+            <button class="number" onclick="inputNumber('6')">6</button>
+            <button class="operator" onclick="inputOperator('-')">−</button>
+            <button class="equals" onclick="calculate()" rowspan="2">=</button>
+            
+            <button class="number" onclick="inputNumber('1')">1</button>
+            <button class="number" onclick="inputNumber('2')">2</button>
+            <button class="number" onclick="inputNumber('3')">3</button>
+            <button class="operator" onclick="inputOperator('+')">+</button>
+            
+            <button class="number zero" onclick="inputNumber('0')">0</button>
+            <button class="decimal" onclick="inputDecimal()">.</button>
+            <button class="scientific" onclick="inputFunction('1/x')">1/x</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '';
+        let previousInput = '';
+        let operator = '';
+        let shouldResetDisplay = false;
+        let memory = 0;
+
+        const inputDisplay = document.getElementById('inputDisplay');
+        const resultDisplay = document.getElementById('resultDisplay');
+
+        function updateDisplay() {
+            inputDisplay.textContent = previousInput + ' ' + operator + ' ' + currentInput;
+            resultDisplay.textContent = currentInput || '0';
+        }
+
+        function inputNumber(number) {
+            if (shouldResetDisplay) {
+                currentInput = '';
+                shouldResetDisplay = false;
+            }
+            
+            if (currentInput.length < 12) {
+                currentInput = currentInput === '0' ? number : currentInput + number;
+                updateDisplay();
+            }
+        }
+
+        function inputOperator(op) {
+            if (currentInput === '' && previousInput === '') return;
+            
+            if (currentInput === '' && previousInput !== '') {
+                operator = op;
+                updateDisplay();
+                return;
+            }
+            
+            if (previousInput !== '' && currentInput !== '' && operator !== '') {
+                calculate();
+            }
+            
+            operator = op;
+            previousInput = currentInput;
+            currentInput = '';
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function inputDecimal() {
+            if (shouldResetDisplay) {
+                currentInput = '0';
+                shouldResetDisplay = false;
+            }
+            
+            if (currentInput === '') {
+                currentInput = '0';
+            }
+            
+            if (currentInput.indexOf('.') === -1) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+
+        function calculate() {
+            if (previousInput === '' || currentInput === '' || operator === '') return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            switch (operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        alert('Cannot divide by zero!');
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            // Round to prevent floating point precision issues
+            result = Math.round((result + Number.EPSILON) * 100000000) / 100000000;
+            
+            currentInput = result.toString();
+            operator = '';
+            previousInput = '';
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function clearCalculator() {
+            currentInput = '';
+            previousInput = '';
+            operator = '';
+            shouldResetDisplay = false;
+            inputDisplay.textContent = '';
+            resultDisplay.textContent = '0';
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 0) {
+                currentInput = currentInput.slice(0, -1);
+                updateDisplay();
+            }
+        }
+
+        function inputFunction(func) {
+            const current = parseFloat(currentInput) || 0;
+            let result;
+            
+            switch (func) {
+                case 'sqrt':
+                    if (current < 0) {
+                        alert('Cannot calculate square root of negative number!');
+                        return;
+                    }
+                    result = Math.sqrt(current);
+                    break;
+                case 'power':
+                    result = current * current;
+                    break;
+                case 'percent':
+                    result = current / 100;
+                    break;
+                case '1/x':
+                    if (current === 0) {
+                        alert('Cannot divide by zero!');
+                        return;
+                    }
+                    result = 1 / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            result = Math.round((result + Number.EPSILON) * 100000000) / 100000000;
+            currentInput = result.toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (currentInput !== '' && currentInput !== '0') {
+                currentInput = currentInput.startsWith('-') 
+                    ? currentInput.substring(1) 
+                    : '-' + currentInput;
+                updateDisplay();
+            }
+        }
+
+        function memoryClear() {
+            memory = 0;
+        }
+
+        function memoryRecall() {
+            currentInput = memory.toString();
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        function memoryAdd() {
+            const current = parseFloat(currentInput) || 0;
+            memory += current;
+        }
+
+        function memorySubtract() {
+            const current = parseFloat(currentInput) || 0;
+            memory -= current;
+        }
+
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                inputNumber(key);
+            } else if (key === '.') {
+                inputDecimal();
+            } else if (key === '+') {
+                inputOperator('+');
+            } else if (key === '-') {
+                inputOperator('-');
+            } else if (key === '*') {
+                inputOperator('*');
+            } else if (key === '/') {
+                event.preventDefault();
+                inputOperator('/');
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Escape') {
+                clearCalculator();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
